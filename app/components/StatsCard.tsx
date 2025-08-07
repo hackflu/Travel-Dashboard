@@ -5,7 +5,6 @@ function StatsCard({ headerTitle, total, currentMonth, lastMonth }: StatsCard) {
     lastMonth
   );
   const isDecrement = trend === "decrement";
-  console.log(isDecrement);
   return (
     <article className="stats-card">
       <h3 className="text-base font-medium">{headerTitle}</h3>
