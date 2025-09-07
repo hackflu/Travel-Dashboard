@@ -13,12 +13,7 @@ export const sidebarItems = [
     label: "All Users",
     href: "/all-users",
   },
-  {
-    id: 4,
-    icon: "/assets/icons/itinerary.svg",
-    label: "AI Trips",
-    href: "/trips",
-  },
+ 
 ];
 
 export const chartOneData: object[] = [

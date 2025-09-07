@@ -1,6 +1,6 @@
 import { ID, OAuthProvider, Query } from "appwrite";
 import { account, database, appwriteConfig } from "~/appwrite/client";
-import { redirect, type Session } from "react-router";
+import { redirect } from "react-router";
 
 export const getExistingUser = async (id: string) => {
     try {
@@ -9,7 +9,6 @@ export const getExistingUser = async (id: string) => {
             appwriteConfig.userCollectionId,
             [Query.equal("accountId", id)]
         );
-
         return total > 0 ? documents[0] : null;
     } catch (error) {
         console.error("Error fetching user:", error);
@@ -26,8 +25,7 @@ export const storeUserData = async () => {
         const profilePicture = providerAccessToken
             ? await getGooglePicture(providerAccessToken)
             : null;
-        console.log(appwriteConfig.userCollectionId)
-        console.log(appwriteConfig.databaseId)
+
         const createdUser = await database.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
@@ -36,7 +34,7 @@ export const storeUserData = async () => {
                 accountId: user.$id,
                 Email: user.email,
                 name: user.name,
-                imageUrl: profilePicture ,
+                imageUrl: profilePicture,
                 joinedAt: new Date().toISOString(),
             }
         );
@@ -58,20 +56,29 @@ const getGooglePicture = async (accessToken: string) => {
         const { photos } = await response.json();
         return photos?.[0]?.url || null;
     } catch (error) {
+        
+        console.error("Error fetching Google picture:", error);
         return null;
     }
 };
 
 export const loginWithGoogle = async () => {
     try {
-        account.createOAuth2Session(
+        account.createOAuth2Token(
             OAuthProvider.Google,
-            `${window.location.origin}/`,
-            `${window.location.origin}/404`
+            `${window.location.origin}/auth/callback`,
+            `${window.location.origin}/sign-in`
         );
-        
     } catch (error) {
         console.error("Error during OAuth2 session creation:", error);
+    }
+};
+
+export const logoutUser = async () => {
+    try {
+        await account.deleteSession("current");
+    } catch (error) {
+        console.error("Error during logout:", error);
     }
 };
 
@@ -85,7 +92,7 @@ export const getUser = async () => {
             appwriteConfig.userCollectionId,
             [
                 Query.equal("accountId", user.$id),
-                Query.select(["name", "email", "imageUrl", "joinedAt", "accountId"]),
+                Query.select(["name", "Email", "imageUrl", "joinedAt", "accountId"]),
             ]
         );
 
@@ -113,3 +120,18 @@ export const getAllUsers = async (limit: number, offset: number) => {
     }
 }
 
+export const handleCallback = async (userId : string , secret : string) => {
+  try {
+    // Create a session using the OAuth2 token
+    await account.createSession(userId, secret)
+
+    // Get the user data
+    const user  = await account.get()
+
+    // User is now authenticated!
+    return user
+  } catch (error) {
+    console.error('Authentication failed:', error)
+    throw error
+  }
+}

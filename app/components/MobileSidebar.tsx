@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {Link} from "react-router";
 import {SidebarComponent} from "@syncfusion/ej2-react-navigations";
-import NavItems from "./Navbar";
+import Navbar from "./Navbar";
 
 const MobileSidebar = () => {
     let sidebar: SidebarComponent;
@@ -35,7 +35,7 @@ const MobileSidebar = () => {
                 showBackdrop={true}
                 type="over"
             >
-                <NavItems handleClick={toggleSidebar} />
+                <Navbar handleClick={toggleSidebar} />
             </SidebarComponent>
         </div>
     )

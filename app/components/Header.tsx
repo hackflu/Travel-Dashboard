@@ -3,9 +3,13 @@ import { useLocation } from "react-router";
 interface Props {
     title: string;
     description: string;
+    ctaText?: string,
+    ctaUrl?:string
 }
+import { Link } from "react-router";
+import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 
-function Header({title , description} : Props) {
+function Header({title , description,ctaText, ctaUrl } : Props) {
     const location = useLocation();
     return (
       <header className="header">
@@ -17,6 +21,14 @@ function Header({title , description} : Props) {
             {description}
           </p>
         </article>
+        {ctaText && ctaUrl && (
+                <Link to={ctaUrl}>
+                    <ButtonComponent type="button" className="button-class !h-11 !w-full md:w-[240px]">
+                        <img src="/assets/icons/plus.svg" alt="plus" className="size-5" />
+                        <span className="p-16-semibold text-white">{ctaText}</span>
+                    </ButtonComponent>
+                </Link>
+            )}
       </header>
     );
 }
